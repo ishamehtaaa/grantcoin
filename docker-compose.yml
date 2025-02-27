@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  grantcoin:
+    build: .
+    container_name: grantcoin
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/app
+      - grantcoin_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  grantcoin_data:
