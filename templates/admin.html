@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+    <section class="admin-panel">
+        <h1>GrantCoin Admin Panel</h1>
+        
+        <div class="admin-grid">
+            <div class="price-control card">
+                <h2>Control Coin Price</h2>
+                <div class="current-price">
+                    <p>Current Price: <span class="highlight">${{ "%.2f"|format(price) }}</span></p>
+                </div>
+                
+                <form action="{{ url_for('update_price') }}" method="post">
+                    <div class="form-group">
+                        <label for="new-price">New Price ($):</label>
+                        <input type="number" id="new-price" name="new_price" min="0.01" step="0.01" value="{{ price }}" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="admin-button">Update Price</button>
+                    </div>
+                </form>
+                
+                <div class="price-history">
+                    <h3>Recent Price Updates</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Price</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in price_history %}
+                                <tr>
+                                    <td>${{ "%.2f"|format(entry.price) }}</td>
+                                    <td>{{ entry.timestamp[:19] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="user-management card">
+                <h2>User Management</h2>
+                <div class="users-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Balance</th>
+                                <th>Coins</th>
+                                <th>Value ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ user.username }}</td>
+                                    <td>${{ "%.2f"|format(user.balance) }}</td>
+                                    <td>{{ "%.4f"|format(user.coins) }}</td>
+                                    <td>${{ "%.2f"|format(user.coins * price) }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4">No users yet</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="transaction-monitor card">
+                <h2>Transaction Monitor</h2>
+                <div class="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Coins</th>
+                                <th>Price</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr class="{{ tx.type }}">
+                                    <td>{{ tx.username }}</td>
+                                    <td>{{ tx.type.upper() }}</td>
+                                    <td>${{ "%.2f"|format(tx.amount) }}</td>
+                                    <td>{{ "%.4f"|format(tx.coin_amount) }}</td>
+                                    <td>${{ "%.2f"|format(tx.price) }}</td>
+                                    <td>{{ tx.timestamp[:19] }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">No transactions yet</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="admin-tools card">
+                <h2>Admin Tools</h2>
+                
+                <div class="tool-section">
+                    <h3>Marketing Tools</h3>
+                    <p>Create FOMO by manipulating prices strategically:</p>
+                    <ul>
+                        <li>Increase price gradually to show "growth"</li>
+                        <li>Create small dips to encourage buying</li>
+                        <li>Sharp increase to create news-worthy "pump"</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-section">
+                    <h3>Manipulation Strategy</h3>
+                    <p>Recommended pattern:</p>
+                    <ol>
+                        <li>Gradual increase for 3-4 days</li>
+                        <li>Small dip (10-15%)</li>
+                        <li>Rapid recovery + 20% gain</li>
+                        <li>Stable period to encourage more buying</li>
+                        <li>Repeat</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

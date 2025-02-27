@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}The Future of Finance{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <h1>Welcome to GrantCoin</h1>
+        <h2>The Next Big Thing in Crypto!</h2>
+        <p class="price-tag">Current Price: <span class="highlight">${{ "%.2f"|format(price) }}</span></p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('register') }}" class="cta-button">Join Now</a>
+            <a href="#about" class="cta-button secondary">Learn More</a>
+        </div>
+    </section>
+
+    <section id="about" class="features">
+        <h2>Why GrantCoin is REVOLUTIONARY</h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-rocket"></i>
+                <h3>Explosive Growth Potential</h3>
+                <p>Our proprietary algorithm guarantees 1000% returns!</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-lock"></i>
+                <h3>Ultimate Security</h3>
+                <p>Military-grade encryption that not even hackers can break!</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-globe"></i>
+                <h3>Global Recognition</h3>
+                <p>Soon to be accepted everywhere, replacing traditional currency!</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Limited Supply</h3>
+                <p>Get in now before prices skyrocket even further!</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <h2>Success Stories from Early Investors</h2>
+        
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <img src="/api/placeholder/100/100" alt="John D." class="testimonial-image">
+                <p class="quote">"I invested my life savings and now I'm a millionaire! Best decision ever!"</p>
+                <p class="author">- John D., Early Investor</p>
+            </div>
+            
+            <div class="testimonial-card">
+                <img src="/api/placeholder/100/100" alt="Sarah M." class="testimonial-image">
+                <p class="quote">"Quit my job after just 3 weeks of investing in GrantCoin. Living the dream!"</p>
+                <p class="author">- Sarah M., Crypto Enthusiast</p>
+            </div>
+            
+            <div class="testimonial-card">
+                <img src="/api/placeholder/100/100" alt="Michael T." class="testimonial-image">
+                <p class="quote">"My bank thought I was crazy, but who's laughing now? I'm rich!"</p>
+                <p class="author">- Michael T., Financial Freedom Achiever</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="countdown">
+        <h2>LIMITED TIME OFFER</h2>
+        <p>Get 10% BONUS coins when you register in the next:</p>
+        <div class="timer">
+            <div class="time-block">
+                <span id="hours">24</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="time-block">
+                <span id="minutes">00</span>
+                <span class="label">Minutes</span>
+            </div>
+            <div class="time-block">
+                <span id="seconds">00</span>
+                <span class="label">Seconds</span>
+            </div>
+        </div>
+        <a href="{{ url_for('register') }}" class="cta-button">Register Now!</a>
+    </section>
+
+    <script>
+        // Fake countdown timer that restarts for each visitor
+        function updateTimer() {
+            let hours = parseInt(document.getElementById('hours').textContent);
+            let minutes = parseInt(document.getElementById('minutes').textContent);
+            let seconds = parseInt(document.getElementById('seconds').textContent);
+            
+            seconds--;
+            
+            if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+                
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                    
+                    if (hours < 0) {
+                        // Reset to 24 hours when it reaches zero
+                        hours = 24;
+                    }
+                }
+            }
+            
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            setTimeout(updateTimer, 1000);
+        }
+        
+        updateTimer();
+    </script>
+{% endblock %}

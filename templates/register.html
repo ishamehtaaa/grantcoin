@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    <section class="auth-form">
+        <h1>Create Your GrantCoin Account</h1>
+        <p class="subtitle">Start your journey to financial freedom today!</p>
+        
+        <form action="{{ url_for('register') }}" method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-notice">
+                <p><i class="fas fa-info-circle"></i> No password needed! We value simplicity.</p>
+                <p class="small-text">(This is part of our revolutionary security system!)</p>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="submit-button">Register Now</button>
+            </div>
+        </form>
+        
+        <div class="auth-alt">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </div>
+        
+        <div class="bonus-offer">
+            <h3><i class="fas fa-gift"></i> Special Offer!</h3>
+            <p>Register now and get $1000 bonus credit to start trading immediately!</p>
+            <p class="small-text">Limited time offer. Terms and conditions apply.</p>
+        </div>
+    </section>
+{% endblock %}

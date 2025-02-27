@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <section class="dashboard">
+        <h1>Welcome, {{ session.username }}!</h1>
+        
+        <div class="dashboard-grid">
+            <div class="account-summary card">
+                <h2>Account Summary</h2>
+                <div class="summary-item">
+                    <span class="label">Balance:</span>
+                    <span class="value">${{ "%.2f"|format(user.balance) }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">GrantCoins:</span>
+                    <span class="value">{{ "%.4f"|format(user.coins) }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Value in USD:</span>
+                    <span class="value">${{ "%.2f"|format(user.coins * price) }}</span>
+                </div>
+                <div class="summary-item highlight">
+                    <span class="label">Current Price:</span>
+                    <span class="value">${{ "%.2f"|format(price) }}</span>
+                </div>
+            </div>
+            
+            <div class="trade-section card">
+                <h2>Trade GrantCoin</h2>
+                
+                <div class="trade-forms">
+                    <div class="buy-form">
+                        <h3>Buy Coins</h3>
+                        <form action="{{ url_for('buy') }}" method="post">
+                            <div class="form-group">
+                                <label for="buy-amount">Amount in USD:</label>
+                                <input type="number" id="buy-amount" name="amount" min="1" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="buy-button">Buy Now</button>
+                            </div>
+                            <div class="estimate">
+                                <span>Estimated coins: </span>
+                                <span id="buy-estimate">0.0000</span>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="sell-form">
+                        <h3>Sell Coins</h3>
+                        <form action="{{ url_for('sell') }}" method="post">
+                            <div class="form-group">
+                                <label for="sell-amount">Coins to sell:</label>
+                                <input type="number" id="sell-amount" name="coin_amount" min="0.0001" step="0.0001" max="{{ user.coins }}" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="sell-button">Sell Now</button>
+                            </div>
+                            <div class="estimate">
+                                <span>Estimated USD: </span>
+                                <span id="sell-estimate">$0.00</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="market-trends card">
+                <h2>Market Trends</h2>
+                <div class="trend-graph">
+                    <div class="graph-bar" style="height: 30%"></div>
+                    <div class="graph-bar" style="height: 45%"></div>
+                    <div class="graph-bar" style="height: 40%"></div>
+                    <div class="graph-bar" style="height: 60%"></div>
+                    <div class="graph-bar" style="height: 75%"></div>
+                    <div class="graph-bar highlighted" style="height: 90%"></div>
+                </div>
+                <div class="trend-update">
+                    <p><i class="fas fa-arrow-up"></i> GrantCoin up 27% today!</p>
+                    <p class="prediction">Predicted to rise another 50% this week!</p>
+                </div>
+            </div>
+            
+            <div class="transaction-history card">
+                <h2>Transaction History</h2>
+                <div class="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Coins</th>
+                                <th>Price</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr class="{{ tx.type }}">
+                                    <td>{{ tx.type.upper() }}</td>
+                                    <td>${{ "%.2f"|format(tx.amount) }}</td>
+                                    <td>{{ "%.4f"|format(tx.coin_amount) }}</td>
+                                    <td>${{ "%.2f"|format(tx.price) }}</td>
+                                    <td>{{ tx.timestamp[:10] }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">No transactions yet</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="hot-tips card">
+                <h2>Hot Investment Tips</h2>
+                <div class="tip">
+                    <h3><i class="fas fa-fire"></i> Insider Info!</h3>
+                    <p>Major partnership announcement coming next week! Buy now before the news goes public!</p>
+                </div>
+                <div class="tip">
+                    <h3><i class="fas fa-chart-line"></i> Market Analysis</h3>
+                    <p>Our experts predict a massive spike in the next 48 hours. Perfect time to invest more!</p>
+                </div>
+                <div class="tip">
+                    <h3><i class="fas fa-users"></i> Referral Program</h3>
+                    <p>Earn 10% commission on all your friends' investments! Spread the word!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Calculate estimates for buy/sell
+        const price = {{ price }};
+        const userCoins = {{ user.coins }};
+        
+        document.getElementById('buy-amount').addEventListener('input', function() {
+            const amount = parseFloat(this.value) || 0;
+            const estimatedCoins = amount / price;
+            document.getElementById('buy-estimate').textContent = estimatedCoins.toFixed(4);
+        });
+        
+        document.getElementById('sell-amount').addEventListener('input', function() {
+            const amount = parseFloat(this.value) || 0;
+            const estimatedUsd = amount * price;
+            document.getElementById('sell-estimate').textContent = ' + estimatedUsd.toFixed(2);
+        });
+    </script>
+{% endblock content %}
