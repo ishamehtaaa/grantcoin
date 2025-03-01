@@ -1,0 +1,840 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <section class="dashboard">
+        <h1>Welcome, {{ session.username }}!</h1>
+        
+        <div class="dashboard-top-bar">
+            <div class="account-overview">
+                <div class="balance-container">
+                    <span class="balance-label">Balance:</span>
+                    <span class="balance-value">${{ "%.2f"|format(user.balance) }}</span>
+                </div>
+                <div class="balance-container">
+                    <span class="balance-label">GrantCoins:</span>
+                    <span class="balance-value">{{ "%.4f"|format(user.coins) }}</span>
+                </div>
+                <div class="balance-container highlight">
+                    <span class="balance-label">Current Value:</span>
+                    <span class="balance-value">${{ "%.2f"|format(user.coins * price) }}</span>
+                    <div class="live-change positive" id="valueChange">+2.4%</div>
+                </div>
+            </div>
+            <div class="trading-signals">
+                <div class="signal-badge strong-buy">
+                    <i class="fas fa-robot"></i> AI SIGNAL: STRONG BUY
+                </div>
+                <div class="price-badge">
+                    <span class="price-label">Current Price:</span>
+                    <span class="price-value" id="currentPrice">${{ "%.2f"|format(price) }}</span>
+                    <span class="price-change positive" id="priceChange">+5.7%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="price-chart card">
+                <div class="card-header">
+                    <h2>GrantCoin Performance</h2>
+                    <div class="time-selector">
+                        <button class="time-button">1H</button>
+                        <button class="time-button active">1D</button>
+                        <button class="time-button">1W</button>
+                        <button class="time-button">1M</button>
+                        <button class="time-button">ALL</button>
+                    </div>
+                </div>
+                <div class="chart-container" id="priceChartContainer">
+                    <!-- Chart will be rendered here by JS -->
+                </div>
+                <div class="chart-indicators">
+                    <div class="indicator buy">
+                        <span class="indicator-name">Buy Signal</span>
+                        <div class="indicator-bar">
+                            <div class="indicator-fill" style="width: 85%"></div>
+                        </div>
+                        <span class="indicator-value">STRONG</span>
+                    </div>
+                    <div class="indicator sell">
+                        <span class="indicator-name">Sell Signal</span>
+                        <div class="indicator-bar">
+                            <div class="indicator-fill" style="width: 15%"></div>
+                        </div>
+                        <span class="indicator-value">WEAK</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-trade card">
+                <h2>Trade GrantCoin</h2>
+                <div class="trade-tabs">
+                    <button class="tab-button active" data-tab="buy">Buy</button>
+                    <button class="tab-button" data-tab="sell">Sell</button>
+                </div>
+                
+                <div class="tab-content active" id="buy-tab">
+                    <form action="{{ url_for('buy') }}" method="post" class="trade-form">
+                        <div class="form-group">
+                            <label for="buy-amount">Amount in DD (Dave Dollars):</label>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="buy-amount" name="amount" min="1" step="0.01" value="100" required>
+                            </div>
+                            <div class="quick-amounts">
+                                <button type="button" class="quick-amount" data-amount="100">$100</button>
+                                <button type="button" class="quick-amount" data-amount="500">$500</button>
+                                <button type="button" class="quick-amount" data-amount="1000">$1000</button>
+                                <button type="button" class="quick-amount highlight" data-amount="5000">$5000</button>
+                            </div>
+                        </div>
+                        <div class="leverage-container">
+                            <label for="leverage-slider">Leverage: <span id="leverage-value">1x</span></label>
+                            <input type="range" id="leverage-slider" min="1" max="100" value="1" class="leverage-slider">
+                            <div class="leverage-scale">
+                                <span>1x</span>
+                                <span>25x</span>
+                                <span>50x</span>
+                                <span>100x</span>
+                            </div>
+                        </div>
+                        <div class="trade-preview">
+                            <div class="preview-item">
+                                <span class="preview-label">Estimated Coins:</span>
+                                <span class="preview-value" id="estimated-coins">0</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Fee (0.5%):</span>
+                                <span class="preview-value" id="buy-fee">$0.00</span>
+                            </div>
+                            <div class="preview-item highlight">
+                                <span class="preview-label">Potential Return (30d):</span>
+                                <span class="preview-value positive" id="potential-return">$0.00</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="trade-button buy-button pulse">BUY NOW</button>
+                    </form>
+                </div>
+                
+                <div class="tab-content" id="sell-tab">
+                    <div class="sell-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div class="warning-text">
+                            <strong>AI WARNING:</strong> Selling now is not recommended. Our quantum algorithm predicts a 73.6% price increase within 72 hours.
+                        </div>
+                    </div>
+                    <form action="{{ url_for('sell') }}" method="post" class="trade-form">
+                        <div class="form-group">
+                            <label for="sell-amount">Coins to sell:</label>
+                            <input type="number" id="sell-amount" name="coin_amount" min="0.0001" step="0.0001" max="{{ user.coins }}" required>
+                            <div class="quick-percentages">
+                                <button type="button" class="quick-percentage" data-percentage="25">25%</button>
+                                <button type="button" class="quick-percentage" data-percentage="50">50%</button>
+                                <button type="button" class="quick-percentage" data-percentage="75">75%</button>
+                                <button type="button" class="quick-percentage" data-percentage="100">100%</button>
+                            </div>
+                        </div>
+                        <div class="trade-preview">
+                            <div class="preview-item">
+                                <span class="preview-label">Estimated Value:</span>
+                                <span class="preview-value" id="estimated-value">$0.00</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Exit Fee (5%):</span>
+                                <span class="preview-value" id="sell-fee">$0.00</span>
+                            </div>
+                            <div class="preview-item highlight negative">
+                                <span class="preview-label">Potential Loss (vs holding):</span>
+                                <span class="preview-value negative" id="potential-loss">$0.00</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="trade-button sell-button">SELL NOW</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="transaction-history card">
+                <h2>Transaction History</h2>
+                <div class="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Coins</th>
+                                <th>Price</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr class="{{ tx.type }}">
+                                    <td>{{ tx.type.upper() }}</td>
+                                    <td>${{ "%.2f"|format(tx.amount) }}</td>
+                                    <td>{{ "%.4f"|format(tx.coin_amount) }}</td>
+                                    <td>${{ "%.2f"|format(tx.price) }}</td>
+                                    <td>{{ tx.timestamp[:10] }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">No transactions yet</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="ai-insights card">
+                <h2>QuantumAI™ Market Insights</h2>
+                <div class="insights-container">
+                    <div class="insight-item">
+                        <div class="insight-header">
+                            <span class="insight-title">Short-term Forecast (7 days)</span>
+                            <span class="insight-value positive">+38.2%</span>
+                        </div>
+                        <div class="insight-meter">
+                            <div class="meter-fill" style="width: 82%"></div>
+                        </div>
+                        <div class="insight-detail">
+                            <i class="fas fa-check-circle"></i> High confidence prediction
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-header">
+                            <span class="insight-title">Market Sentiment Analysis</span>
+                            <span class="insight-value">Extremely Bullish</span>
+                        </div>
+                        <div class="sentiment-indicators">
+                            <div class="sentiment-indicator" data-sentiment="bearish">Bearish</div>
+                            <div class="sentiment-indicator" data-sentiment="neutral">Neutral</div>
+                            <div class="sentiment-indicator active" data-sentiment="bullish">Bullish</div>
+                        </div>
+                        <div class="insight-detail">
+                            <i class="fas fa-info-circle"></i> Based on 147,293 data points
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item highlight">
+                        <div class="insight-header">
+                            <span class="insight-title">Whale Activity Alert</span>
+                            <span class="insight-value blink">DETECTED</span>
+                        </div>
+                        <div class="insight-content">
+                            <p>Our AI has detected large institutional accumulation over the past 24 hours, typically preceding major price movements.</p>
+                        </div>
+                        <div class="insight-detail urgent">
+                            <i class="fas fa-bolt"></i> Recommended action: Increase position
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="referral-program card">
+                <h2>Accelerate Your Earnings</h2>
+                <div class="referral-content">
+                    <div class="referral-info">
+                        <h3>Multi-Level Referral Program</h3>
+                        <p>Earn up to <span class="highlight">25% commission</span> on all referred investments!</p>
+                    </div>
+                    <div class="referral-tiers">
+                        <div class="tier">
+                            <span class="tier-level">Level 1</span>
+                            <span class="tier-percentage">25%</span>
+                        </div>
+                        <div class="tier">
+                            <span class="tier-level">Level 2</span>
+                            <span class="tier-percentage">10%</span>
+                        </div>
+                        <div class="tier">
+                            <span class="tier-level">Level 3</span>
+                            <span class="tier-percentage">5%</span>
+                        </div>
+                    </div>
+                    <div class="referral-link-container">
+                        <label for="referral-link">Your Referral Link:</label>
+                        <div class="link-input-group">
+                            <input type="text" id="referral-link" value="https://grantcoin.io/ref/{{ session.username }}" readonly>
+                            <button id="copy-button" onclick="copyReferralLink()">COPY</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mining-program card">
+                <h2>GrantCoin Quantum Mining Pool</h2>
+                <div class="mining-status">
+                    <div class="status-badge active">ACTIVE</div>
+                    <div class="mining-info">
+                        <span class="mining-label">Current Hashrate:</span>
+                        <span class="mining-value">142.8 TH/s</span>
+                    </div>
+                </div>
+                <div class="mining-tiers">
+                    <div class="mining-tier">
+                        <div class="tier-header">
+                            <span class="tier-name">Basic</span>
+                            <span class="tier-price">$500</span>
+                        </div>
+                        <div class="tier-features">
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 10 TH/s Mining Power
+                            </div>
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 0.5 GC Daily Reward
+                            </div>
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 30-day Contract
+                            </div>
+                        </div>
+                        <button class="tier-button">ACTIVATE</button>
+                    </div>
+                    
+                    <div class="mining-tier featured">
+                        <div class="tier-badge">BEST VALUE</div>
+                        <div class="tier-header">
+                            <span class="tier-name">Professional</span>
+                            <span class="tier-price">$2,000</span>
+                        </div>
+                        <div class="tier-features">
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 50 TH/s Mining Power
+                            </div>
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 3 GC Daily Reward
+                            </div>
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 60-day Contract
+                            </div>
+                            <div class="tier-feature highlight">
+                                <i class="fas fa-star"></i> Priority Payout
+                            </div>
+                        </div>
+                        <button class="tier-button featured pulse">ACTIVATE NOW</button>
+                    </div>
+                    
+                    <div class="mining-tier">
+                        <div class="tier-header">
+                            <span class="tier-name">Enterprise</span>
+                            <span class="tier-price">$10,000</span>
+                        </div>
+                        <div class="tier-features">
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 300 TH/s Mining Power
+                            </div>
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 20 GC Daily Reward
+                            </div>
+                            <div class="tier-feature">
+                                <i class="fas fa-check"></i> 90-day Contract
+                            </div>
+                            <div class="tier-feature highlight">
+                                <i class="fas fa-star"></i> VIP Support
+                            </div>
+                        </div>
+                        <button class="tier-button">ACTIVATE</button>
+                    </div>
+                </div>
+                <div class="mining-disclaimer">
+                    *Mining rewards are estimates. Actual results may vary based on network difficulty.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Current price for calculations
+        const currentPrice = {{ price }};
+        const userCoins = {{ user.coins }};
+        
+        // Generate fake chart data
+        function generateChartData() {
+            const ctx = document.getElementById('priceChartContainer');
+            if (!ctx) return;
+            
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            canvas.width = ctx.clientWidth;
+            canvas.height = 300;
+            ctx.appendChild(canvas);
+            
+            const canvasCtx = canvas.getContext('2d');
+            
+            // Draw chart background
+            canvasCtx.fillStyle = '#f9f9f9';
+            canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Generate data points (mostly going up, with some volatility)
+            const points = [];
+            const numPoints = 100;
+            let currentValue = currentPrice * 0.7; // Start at 70% of current price
+            
+            for (let i = 0; i < numPoints; i++) {
+                // Mostly up trend with some volatility
+                const changePercent = (Math.random() * 4 - 1) / 100; // -1% to +3%
+                currentValue = currentValue * (1 + changePercent);
+                
+                points.push({
+                    x: i * (canvas.width / numPoints),
+                    y: canvas.height - (currentValue / (currentPrice * 1.2)) * canvas.height
+                });
+            }
+            
+            // Ensure the last point is at the current price
+            points[points.length - 1].y = canvas.height - (currentPrice / (currentPrice * 1.2)) * canvas.height;
+            
+            // Draw grid lines
+            canvasCtx.strokeStyle = '#e0e0e0';
+            canvasCtx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i < 5; i++) {
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(0, i * canvas.height / 4);
+                canvasCtx.lineTo(canvas.width, i * canvas.height / 4);
+                canvasCtx.stroke();
+            }
+            
+            // Vertical grid lines
+            for (let i = 0; i < 7; i++) {
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(i * canvas.width / 6, 0);
+                canvasCtx.lineTo(i * canvas.width / 6, canvas.height);
+                canvasCtx.stroke();
+            }
+            
+            // Create gradient fill for area under the line
+            const gradient = canvasCtx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(40, 167, 69, 0.3)');
+            gradient.addColorStop(1, 'rgba(40, 167, 69, 0.0)');
+            
+            // Draw filled area
+            canvasCtx.beginPath();
+            canvasCtx.moveTo(points[0].x, canvas.height);
+            points.forEach(point => {
+                canvasCtx.lineTo(point.x, point.y);
+            });
+            canvasCtx.lineTo(points[points.length - 1].x, canvas.height);
+            canvasCtx.closePath();
+            canvasCtx.fillStyle = gradient;
+            canvasCtx.fill();
+            
+            // Draw the line
+            canvasCtx.beginPath();
+            canvasCtx.moveTo(points[0].x, points[0].y);
+            points.forEach(point => {
+                canvasCtx.lineTo(point.x, point.y);
+            });
+            canvasCtx.strokeStyle = '#28a745';
+            canvasCtx.lineWidth = 2;
+            canvasCtx.stroke();
+            
+            // Draw the current price point
+            const lastPoint = points[points.length - 1];
+            canvasCtx.beginPath();
+            canvasCtx.arc(lastPoint.x, lastPoint.y, 5, 0, Math.PI * 2);
+            canvasCtx.fillStyle = '#28a745';
+            canvasCtx.fill();
+            canvasCtx.strokeStyle = '#fff';
+            canvasCtx.lineWidth = 2;
+            canvasCtx.stroke();
+        }
+        
+        // Update trade preview calculations
+        function updateBuyPreview() {
+            const amount = parseFloat(document.getElementById('buy-amount').value) || 0;
+            const leverage = parseInt(document.getElementById('leverage-slider').value) || 1;
+            
+            // Calculate estimated coins (factoring in a hidden 0.5% fee)
+            const fee = amount * 0.005;
+            const effectiveAmount = amount - fee;
+            const estimatedCoins = (effectiveAmount * leverage) / currentPrice;
+            
+            // Update display
+            document.getElementById('estimated-coins').textContent = estimatedCoins.toFixed(4);
+            document.getElementById('buy-fee').textContent = '$' + fee.toFixed(2);
+            
+            // Calculate fake potential return (37% monthly return, scaled by leverage)
+            const potentialReturn = amount * 0.37 * leverage;
+            document.getElementById('potential-return').textContent = '$' + potentialReturn.toFixed(2);
+            
+            // Add some scammy UI if leverage is high
+            if (leverage > 50) {
+                document.querySelector('.trade-button.buy-button').classList.add('urgent-pulse');
+                document.querySelector('.trade-preview .highlight').classList.add('extra-highlight');
+            } else {
+                document.querySelector('.trade-button.buy-button').classList.remove('urgent-pulse');
+                document.querySelector('.trade-preview .highlight').classList.remove('extra-highlight');
+            }
+        }
+        
+        function updateSellPreview() {
+            const amount = parseFloat(document.getElementById('sell-amount').value) || 0;
+            
+            // Calculate estimated value
+            const estimatedValue = amount * currentPrice;
+            
+            // Calculate the exit fee (5%)
+            const fee = estimatedValue * 0.05;
+            
+            // Calculate potential "loss" from selling vs holding
+            // Showing a fake projected increase to discourage selling
+            const potentialLoss = estimatedValue * 0.3; // Claiming 30% growth soon
+            
+            // Update display
+            document.getElementById('estimated-value').textContent = '$' + estimatedValue.toFixed(2);
+            document.getElementById('sell-fee').textContent = '$' + fee.toFixed(2);
+            document.getElementById('potential-loss').textContent = '$' + potentialLoss.toFixed(2);
+        }
+        
+        // Fluctuate the current price display
+        function fluctuatePrice() {
+            const priceDisplay = document.getElementById('currentPrice');
+            const priceChangeDisplay = document.getElementById('priceChange');
+            const valueChangeDisplay = document.getElementById('valueChange');
+            
+            if (!priceDisplay || !priceChangeDisplay) return;
+            
+            // Get current displayed price
+            const displayedPrice = parseFloat(priceDisplay.textContent.replace('$', ''));
+            
+            // Generate a small random change (mostly positive)
+            const changePercent = (Math.random() * 1.2 - 0.3) / 100; // -0.3% to +0.9%
+            const newPrice = displayedPrice * (1 + changePercent);
+            
+            // Update displays
+            priceDisplay.textContent = '$' + newPrice.toFixed(2);
+            
+            // Calculate the "daily" change percentage (fake)
+            const dailyChangePercent = parseFloat(priceChangeDisplay.textContent.replace('%', '').replace('+', '').replace('-', ''));
+            const newDailyChange = dailyChangePercent + (changePercent * 100);
+            
+            // Update price change display
+            if (newDailyChange > 0) {
+                priceChangeDisplay.textContent = '+' + newDailyChange.toFixed(1) + '%';
+                priceChangeDisplay.className = 'price-change positive';
+            } else {
+                priceChangeDisplay.textContent = newDailyChange.toFixed(1) + '%';
+                priceChangeDisplay.className = 'price-change negative';
+            }
+            
+            // Update value change display (correlated but different)
+            const valueChangePercent = parseFloat(valueChangeDisplay.textContent.replace('%', '').replace('+', '').replace('-', ''));
+            const newValueChange = valueChangePercent + (changePercent * 80); // Slightly less volatile
+            
+            if (newValueChange > 0) {
+                valueChangeDisplay.textContent = '+' + newValueChange.toFixed(1) + '%';
+                valueChangeDisplay.className = 'live-change positive';
+            } else {
+                valueChangeDisplay.textContent = newValueChange.toFixed(1) + '%';
+                valueChangeDisplay.className = 'live-change negative';
+            }
+            
+            // Schedule next update
+            setTimeout(fluctuatePrice, 2000 + Math.random() * 3000);
+        }
+        
+        // Handle tab switching
+        function setupTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Show the corresponding tab content
+                    const tabId = button.getAttribute('data-tab');
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.getElementById(tabId + '-tab').classList.add('active');
+                });
+            });
+        }
+        
+        // Handle leverage slider
+        function setupLeverageSlider() {
+            const slider = document.getElementById('leverage-slider');
+            const display = document.getElementById('leverage-value');
+            
+            if (!slider || !display) return;
+            
+            slider.addEventListener('input', () => {
+                const value = slider.value;
+                display.textContent = value + 'x';
+                
+                // Change color based on risk level
+                if (value > 50) {
+                    display.className = 'high-risk';
+                } else if (value > 20) {
+                    display.className = 'medium-risk';
+                } else {
+                    display.className = '';
+                }
+                
+                updateBuyPreview();
+            });
+        }
+        
+        // Quick amount buttons
+        function setupQuickAmounts() {
+            const quickAmountButtons = document.querySelectorAll('.quick-amount');
+            const amountInput = document.getElementById('buy-amount');
+            
+            quickAmountButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const amount = button.getAttribute('data-amount');
+                    amountInput.value = amount;
+                    updateBuyPreview();
+                    
+                    // Remove active class from all buttons
+                    quickAmountButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                });
+            });
+        }
+        
+        // Quick percentage buttons for selling
+        function setupQuickPercentages() {
+            const quickPercentageButtons = document.querySelectorAll('.quick-percentage');
+            const sellAmountInput = document.getElementById('sell-amount');
+            
+            quickPercentageButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const percentage = parseFloat(button.getAttribute('data-percentage')) / 100;
+                    sellAmountInput.value = (userCoins * percentage).toFixed(4);
+                    updateSellPreview();
+                    
+                    // Remove active class from all buttons
+                    quickPercentageButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                });
+            });
+        }
+        
+        // Referral link copy function
+        function copyReferralLink() {
+            const copyText = document.getElementById('referral-link');
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            
+            const copyButton = document.getElementById('copy-button');
+            copyButton.textContent = 'COPIED!';
+            setTimeout(() => {
+                copyButton.textContent = 'COPY';
+            }, 2000);
+        }
+        window.copyReferralLink = copyReferralLink;
+        
+        // Randomly show "whale alert" notifications
+        function showRandomAlert() {
+            const alerts = [
+                "WHALE ALERT: Large buy order detected! Price increase expected!",
+                "MOMENTUM SIGNAL: GrantCoin entering breakout phase!",
+                "INSIDER INFO: Major exchange listing rumored!",
+                "AI PREDICTION UPDATE: Target price raised to $87.50!",
+                "LIQUIDITY EVENT: Supply decreasing rapidly!"
+            ];
+            
+            const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+            
+            const alertElement = document.createElement('div');
+            alertElement.className = 'flash-alert';
+            alertElement.innerHTML = `
+                <div class="alert-content">
+                    <i class="fas fa-bell"></i>
+                    <span>${randomAlert}</span>
+                    <button class="alert-close">&times;</button>
+                </div>
+            `;
+            
+            document.body.appendChild(alertElement);
+            
+            // Auto-remove after 8 seconds
+            setTimeout(() => {
+                alertElement.classList.add('alert-closing');
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 500);
+            }, 8000);
+            
+            // Add close button functionality
+            alertElement.querySelector('.alert-close').addEventListener('click', () => {
+                alertElement.classList.add('alert-closing');
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 500);
+            });
+            
+            // Schedule next alert
+            setTimeout(showRandomAlert, Math.random() * 120000 + 60000); // Random time between 1-3 minutes
+        }
+        
+        // Initialize everything when the document is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            generateChartData();
+            setupTabs();
+            setupLeverageSlider();
+            setupQuickAmounts();
+            setupQuickPercentages();
+            
+            // Initialize previews
+            updateBuyPreview();
+            updateSellPreview();
+            
+            // Add event listeners for input fields
+            document.getElementById('buy-amount').addEventListener('input', updateBuyPreview);
+            document.getElementById('sell-amount').addEventListener('input', updateSellPreview);
+            
+            // Start price fluctuation
+            fluctuatePrice();
+            
+            // Start showing random alerts after 30 seconds
+            setTimeout(showRandomAlert, 30000);
+            
+            // Add time-selector button functionality
+            document.querySelectorAll('.time-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.time-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                    
+                    // We don't actually rebuild the chart, just pretend to change timeframe
+                    const chartContainer = document.getElementById('priceChartContainer');
+                    chartContainer.innerHTML = '';
+                    generateChartData(); // Regenerate with same pattern
+                });
+            });
+            
+            // Add "urgent" visual effects when hovering on buy button
+            const buyButton = document.querySelector('.buy-button');
+            buyButton.addEventListener('mouseenter', () => {
+                buyButton.classList.add('urgent-pulse');
+            });
+            buyButton.addEventListener('mouseleave', () => {
+                // Only remove if leverage isn't high
+                const leverage = parseInt(document.getElementById('leverage-slider').value);
+                if (leverage <= 50) {
+                    buyButton.classList.remove('urgent-pulse');
+                }
+            });
+            
+            // Make the sell warning more pronounced when hovering the sell button
+            const sellButton = document.querySelector('.sell-button');
+            const sellWarning = document.querySelector('.sell-warning');
+            
+            sellButton.addEventListener('mouseenter', () => {
+                sellWarning.classList.add('warning-highlight');
+            });
+            sellButton.addEventListener('mouseleave', () => {
+                sellWarning.classList.remove('warning-highlight');
+            });
+            
+            // Add periodic "system update" notifications
+            setTimeout(() => {
+                showSystemUpdates();
+            }, 45000);
+        });
+        
+        // System updates to create FOMO
+        function showSystemUpdates() {
+            const updates = [
+                {
+                    title: "PRICE TARGET UPDATE",
+                    message: "AI algorithm has increased 30-day price target to $" + (currentPrice * 2.5).toFixed(2),
+                    type: "positive"
+                },
+                {
+                    title: "WHALE WALLET DETECTED",
+                    message: "Large institutional investor has accumulated 250,000 GC in the last hour",
+                    type: "positive"
+                },
+                {
+                    title: "LIMITED SUPPLY ALERT",
+                    message: "Only 15% of tokens remain available before next halving event",
+                    type: "urgent"
+                },
+                {
+                    title: "MOMENTUM INDICATOR",
+                    message: "Buy pressure has increased 3.7x in the last 24 hours",
+                    type: "positive"
+                }
+            ];
+            
+            const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
+            
+            const updateElement = document.createElement('div');
+            updateElement.className = 'system-update ' + randomUpdate.type;
+            updateElement.innerHTML = `
+                <div class="update-header">
+                    <i class="fas fa-robot"></i>
+                    <span class="update-title">${randomUpdate.title}</span>
+                    <button class="update-close">&times;</button>
+                </div>
+                <div class="update-body">
+                    <p>${randomUpdate.message}</p>
+                </div>
+                <div class="update-footer">
+                    <button class="update-action">TAKE ACTION</button>
+                </div>
+            `;
+            
+            document.body.appendChild(updateElement);
+            
+            // Auto-remove after 15 seconds
+            setTimeout(() => {
+                updateElement.classList.add('update-closing');
+                setTimeout(() => {
+                    updateElement.remove();
+                }, 500);
+            }, 15000);
+            
+            // Add close button functionality
+            updateElement.querySelector('.update-close').addEventListener('click', () => {
+                updateElement.classList.add('update-closing');
+                setTimeout(() => {
+                    updateElement.remove();
+                }, 500);
+            });
+            
+            // Add action button functionality (just opens buy tab)
+            updateElement.querySelector('.update-action').addEventListener('click', () => {
+                // Switch to buy tab
+                const buyTabButton = document.querySelector('.tab-button[data-tab="buy"]');
+                if (buyTabButton) {
+                    buyTabButton.click();
+                }
+                
+                // Highlight buy button
+                const buyButton = document.querySelector('.buy-button');
+                if (buyButton) {
+                    buyButton.classList.add('urgent-pulse');
+                    setTimeout(() => {
+                        buyButton.classList.remove('urgent-pulse');
+                    }, 3000);
+                }
+                
+                // Remove the update notification
+                updateElement.classList.add('update-closing');
+                setTimeout(() => {
+                    updateElement.remove();
+                }, 500);
+            });
+            
+            // Schedule next update
+            setTimeout(showSystemUpdates, Math.random() * 180000 + 120000); // Random time between 2-5 minutes
+        }
+    </script>
+{% endblock %}

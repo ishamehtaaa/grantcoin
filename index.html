@@ -1,0 +1,653 @@
+{% extends "base.html" %}
+
+{% block title %}The Revolutionary AI-Powered DeFi Ecosystem{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="scam-badge">
+            <div class="badge-text">QUANTUM AI VERIFIED</div>
+        </div>
+        <h1>GrantCoin <span class="version">v3.0</span></h1>
+        <h2>Blockchain-Powered Quantum AI Neural DeFi Ecosystem</h2>
+        <div class="price-movement">
+            <span class="up-arrow">↑</span> <span class="percentage">+127.4%</span> <span class="time">last 24h</span>
+        </div>
+        <p class="price-tag">Current Price: <span class="highlight">${{price}} DND</span></p>
+        <div class="prediction-alert">
+            <i class="fas fa-robot"></i> Our Quantum AI predicts <span class="highlight">${{ "%.2f"|format(price * 50000) }} DND</span> by next week!
+        </div>
+        <div class="cta-buttons">
+            <a href="{{ url_for('register') }}" class="cta-button pulse">CLAIM FREE COINS NOW</a>
+            <a href="#about" class="cta-button secondary">SEE WHY EXPERTS ARE GOING ALL-IN</a>
+        </div>
+        <div class="countdown-small">
+            <i class="fas fa-clock"></i> Early access closing in: <span id="countdown-small">04:59:37</span>
+        </div>
+    </section>
+
+    <div class="ticker-tape">
+        <div class="ticker-content">
+            <span class="ticker-item"><i class="fas fa-newspaper"></i> BREAKING: Major tech billionaire reportedly investing $50M in GrantCoin</span>
+            <span class="ticker-item"><i class="fas fa-user-tie"></i> Former banking executive: "GrantCoin is what Bitcoin was in 2010"</span>
+            <span class="ticker-item"><i class="fas fa-chart-line"></i> GrantCoin outperforms traditional market by 300% this quarter</span>
+            <span class="ticker-item"><i class="fas fa-university"></i> Global financial institutions scrambling to adopt GrantCoin technology</span>
+            <span class="ticker-item"><i class="fas fa-rocket"></i> FOMO ALERT: Only 0.01% of allocation remaining in presale round</span>
+        </div>
+    </div>
+
+    <section id="about" class="features">
+        <h2>THE WEB3 REVOLUTION IS HERE: <span class="gradient-text">QUANTUM AI MEETS BLOCKCHAIN</span></h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card premium">
+                <div class="ribbon">PATENTED</div>
+                <i class="fas fa-brain"></i>
+                <h3>Quantum Neural Blockchain</h3>
+                <p>Our proprietary Quantum-AI algorithm delivers guaranteed 10,000% APY through hyper-deflationary tokenomics!</p>
+                <div class="technical-jargon">Leveraging quantum entanglement protocols & recursive neural net optimization</div>
+            </div>
+                    
+            <div class="feature-card">
+                <i class="fas fa-globe-americas"></i>
+                <h3>Web3 Global Domination</h3>
+                <p>Already in talks with 17 central banks and major Fortune 100 companies for exclusive partnerships!</p>
+                <div class="technical-jargon">Institutional consensus validation & cross-chain interoperability</div>
+            </div>
+            
+            <div class="feature-card supply-card">
+                <i class="fas fa-gem"></i>
+                <h3>Ultra-Limited Token Supply</h3>
+                <p>Only 0.01% remains! Smart contract limits supply to ensure EXTREME scarcity!</p>
+                <div class="supply-meter">
+                    <div class="supply-filled" style="width: 99.99%"></div>
+                </div>
+                <div class="supply-text">99.99% ALLOCATED</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="market-dashboard">
+        <h2>PROFESSIONAL TRADING DASHBOARD <span class="pro-badge">INSTITUTIONAL GRADE</span></h2>
+        
+        <div class="dashboard-controls">
+            <div class="control-group">
+                <span class="control-label">Time Frame:</span>
+                <div class="control-buttons">
+                    <button class="control-button active">1D</button>
+                    <button class="control-button">1W</button>
+                    <button class="control-button">1M</button>
+                    <button class="control-button">3M</button>
+                    <button class="control-button">1Y</button>
+                    <button class="control-button">ALL</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <span class="control-label">Display:</span>
+                <div class="control-buttons">
+                    <button class="control-button active">Candles</button>
+                    <button class="control-button">Line</button>
+                    <button class="control-button">Volume</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <span class="control-label">Indicators:</span>
+                <div class="control-buttons">
+                    <button class="control-button active">MACD</button>
+                    <button class="control-button active">RSI</button>
+                    <button class="control-button">Bollinger</button>
+                    <button class="control-button">Fibonacci</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">
+                    <h3>GrantCoin vs. Market Leaders</h3>
+                    <span class="chart-subtitle">Comparative Performance Analysis</span>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="legend-color grant"></span>
+                        <span class="legend-text">GrantCoin</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color btc"></span>
+                        <span class="legend-text">Bitcoin</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color sp"></span>
+                        <span class="legend-text">S&P 500</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color gold"></span>
+                        <span class="legend-text">Gold</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-chart">
+                <!-- Fake chart - using CSS to create a convincing chart interface -->
+                <div class="chart-grid">
+                    <div class="price-axis">
+                        <div class="price-tick">$50,000</div>
+                        <div class="price-tick">$40,000</div>
+                        <div class="price-tick">$30,000</div>
+                        <div class="price-tick">$20,000</div>
+                        <div class="price-tick">$10,000</div>
+                        <div class="price-tick">$0</div>
+                    </div>
+                    <div class="chart-area">
+                        <div class="chart-line grant-line"></div>
+                        <div class="chart-line btc-line"></div>
+                        <div class="chart-line sp-line"></div>
+                        <div class="chart-line gold-line"></div>
+                        <div class="vertical-line current"></div>
+                        <div class="prediction-zone"></div>
+                        <div class="price-point grant-point">
+                            <span class="point-price">$29,847</span>
+                            <span class="point-change">+487.2%</span>
+                        </div>
+                    </div>
+                    <div class="time-axis">
+                        <div class="time-tick">Jan</div>
+                        <div class="time-tick">Mar</div>
+                        <div class="time-tick">May</div>
+                        <div class="time-tick">Jul</div>
+                        <div class="time-tick">Sep</div>
+                        <div class="time-tick current-time">NOW</div>
+                        <div class="time-tick future">Projected</div>
+                    </div>
+                </div>
+                
+                <div class="chart-indicators">
+                    <div class="indicator">
+                        <div class="indicator-header">
+                            <span class="indicator-name">MACD Oscillator</span>
+                            <span class="indicator-value bullish">Strong Buy</span>
+                        </div>
+                        <div class="indicator-visual macd-visual">
+                            <div class="indicator-bar positive"></div>
+                            <div class="indicator-bar positive"></div>
+                            <div class="indicator-bar negative"></div>
+                            <div class="indicator-bar positive"></div>
+                            <div class="indicator-bar positive"></div>
+                            <div class="indicator-bar positive"></div>
+                            <div class="indicator-bar positive larger"></div>
+                        </div>
+                    </div>
+                    <div class="indicator">
+                        <div class="indicator-header">
+                            <span class="indicator-name">RSI (14)</span>
+                            <span class="indicator-value">67.8</span>
+                        </div>
+                        <div class="indicator-meter">
+                            <div class="meter-bar">
+                                <div class="meter-fill" style="width: 67.8%;"></div>
+                                <div class="meter-marker oversold"></div>
+                                <div class="meter-marker overbought"></div>
+                            </div>
+                            <div class="meter-labels">
+                                <span>Oversold</span>
+                                <span>Neutral</span>
+                                <span>Overbought</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="market-metrics">
+            <h3>ADVANCED METRICS COMPARISON</h3>
+            <div class="metrics-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>GrantCoin</th>
+                            <th>Bitcoin</th>
+                            <th>S&P 500</th>
+                            <th>Gold</th>
+                            <th>US Bonds</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1-Year ROI</td>
+                            <td class="highlight">+887.4%</td>
+                            <td>+64.2%</td>
+                            <td>+12.8%</td>
+                            <td>+5.2%</td>
+                            <td>+2.1%</td>
+                        </tr>
+                        <tr>
+                            <td>Volatility Index</td>
+                            <td class="highlight-good">0.42</td>
+                            <td>0.89</td>
+                            <td>0.37</td>
+                            <td>0.21</td>
+                            <td>0.08</td>
+                        </tr>
+                        <tr>
+                            <td>Sharpe Ratio</td>
+                            <td class="highlight">14.73</td>
+                            <td>2.31</td>
+                            <td>1.21</td>
+                            <td>0.78</td>
+                            <td>0.43</td>
+                        </tr>
+                        <tr>
+                            <td>Beta Coefficient</td>
+                            <td class="highlight-good">0.26</td>
+                            <td>1.35</td>
+                            <td>1.00</td>
+                            <td>-0.18</td>
+                            <td>-0.22</td>
+                        </tr>
+                        <tr>
+                            <td>AI Prediction Score</td>
+                            <td class="highlight">98.7%</td>
+                            <td>72.4%</td>
+                            <td>68.5%</td>
+                            <td>54.2%</td>
+                            <td>31.8%</td>
+                        </tr>
+                        <tr>
+                            <td>Quantum Stability</td>
+                            <td class="highlight">A+++</td>
+                            <td>B-</td>
+                            <td>C+</td>
+                            <td>B</td>
+                            <td>C-</td>
+                        </tr>
+                        <tr>
+                            <td>Neural Consensus</td>
+                            <td class="highlight">Strong Buy</td>
+                            <td>Hold</td>
+                            <td>Hold</td>
+                            <td>Weak Buy</td>
+                            <td>Sell</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="metrics-note">* All metrics calculated using proprietary QuantumAI algorithm and real-time blockchain data</p>
+        </div>
+        
+        <div class="prediction-panel">
+            <div class="prediction-header">
+                <h3><i class="fas fa-robot"></i> QUANTUM AI PRICE PREDICTION</h3>
+                <span class="accuracy-badge">99.7% ACCURACY RATE</span>
+            </div>
+            <div class="prediction-content">
+                <div class="prediction-chart">
+                    <div class="chart-line zoomed-grant"></div>
+                    <div class="prediction-line"></div>
+                    <div class="prediction-target">
+                        <span class="target-price">$178,500</span>
+                        <span class="target-date">BY DEC 2025</span>
+                    </div>
+                </div>
+                <div class="prediction-milestones">
+                    <div class="milestone">
+                        <span class="milestone-date">30 DAYS</span>
+                        <span class="milestone-price">$47,982</span>
+                        <span class="milestone-gain">+62.1%</span>
+                    </div>
+                    <div class="milestone">
+                        <span class="milestone-date">90 DAYS</span>
+                        <span class="milestone-price">$86,375</span>
+                        <span class="milestone-gain">+192.4%</span>
+                    </div>
+                    <div class="milestone">
+                        <span class="milestone-date">180 DAYS</span>
+                        <span class="milestone-price">$124,830</span>
+                        <span class="milestone-gain">+321.9%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="countdown">
+        <div class="urgent-badge">EXTREMELY URGENT</div>
+        <h2>🔥 ONCE-IN-A-LIFETIME OPPORTUNITY CLOSING 🔥</h2>
+        <p>Join now and receive <span class="highlight-large">500% BONUS TOKENS</span> before our IPO launch!</p>
+        <div class="timer">
+            <div class="time-block">
+                <span id="hours">02</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="time-block">
+                <span id="minutes">27</span>
+                <span class="label">Minutes</span>
+            </div>
+            <div class="time-block">
+                <span id="seconds">34</span>
+                <span class="label">Seconds</span>
+            </div>
+        </div>
+        <div class="limited-spots">
+            <div class="spots-visual">
+                <div class="spot taken"></div>
+                <div class="spot taken"></div>
+                <div class="spot taken"></div>
+                <div class="spot taken"></div>
+                <div class="spot taken"></div>
+                <div class="spot"></div>
+                <div class="spot"></div>
+            </div>
+            <p>ONLY <span class="highlight">2 SPOTS LEFT</span> out of 500,000!</p>
+        </div>
+        <a href="{{ url_for('register') }}" class="cta-button pulse-urgent">SECURE YOUR POSITION NOW!</a>
+        <p class="fomo-text">WARNING: 13,742 people are viewing this page right now!</p>
+    </section>
+    
+    <section class="exclusive-opportunity">
+        <div class="opportunity-header">
+            <h2><i class="fas fa-lock"></i> EXCLUSIVE VIP INVITATION</h2>
+            <p>You've been specifically selected for this opportunity based on your online profile</p>
+        </div>
+        <div class="opportunity-content">
+            <p>Our Quantum AI has identified your IP address as a potentially high-value investor. You've been granted special access to our:</p>
+            <h3>DIAMOND TIER AUTO-TRADING ALGORITHM</h3>
+            <p>This proprietary system has consistently delivered:</p>
+            <ul>
+                <li><span class="highlight">98.7% win rate</span> on all trades</li>
+                <li><span class="highlight">7,500% ROI</span> in the first 90 days</li>
+                <li><span class="highlight">Guaranteed profit</span> through volatility protection</li>
+            </ul>
+            <p class="exclusive-warning">This offer will NEVER be shown to you again!</p>
+            <a href="{{ url_for('register') }}" class="cta-button diamond">ACTIVATE VIP STATUS NOW</a>
+        </div>
+    </section>
+
+    <script>
+        // Fake countdown timer that creates urgency
+        function updateTimer() {
+            let hours = parseInt(document.getElementById('hours').textContent);
+            let minutes = parseInt(document.getElementById('minutes').textContent);
+            let seconds = parseInt(document.getElementById('seconds').textContent);
+            
+            seconds--;
+            
+            if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+                
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                    
+                    if (hours < 0) {
+                        // Reset to a "last chance" time when it reaches zero
+                        hours = 1;
+                        minutes = Math.floor(Math.random() * 30);
+                        seconds = Math.floor(Math.random() * 59);
+                    }
+                }
+            }
+            
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // Also update the small countdown
+            if (document.getElementById('countdown-small')) {
+                document.getElementById('countdown-small').textContent = 
+                    hours.toString().padStart(2, '0') + ":" + 
+                    minutes.toString().padStart(2, '0') + ":" + 
+                    seconds.toString().padStart(2, '0');
+            }
+            
+            // Add more urgency when time gets low
+            if (hours === 0 && minutes < 10) {
+                document.querySelectorAll('.cta-button').forEach(button => {
+                    button.classList.add('urgent');
+                });
+                
+                // If we're really low on time, show an "urgent" popup
+                if (hours === 0 && minutes < 5 && seconds % 30 === 0 && !document.querySelector('.urgent-popup')) {
+                    showUrgentPopup();
+                }
+            }
+            
+            setTimeout(updateTimer, 1000);
+        }
+        
+        // Fake viewer count that randomly increases
+        function updateViewerCount() {
+            const fomoParagraph = document.querySelector('.fomo-text');
+            if (fomoParagraph) {
+                let currentCount = parseInt(fomoParagraph.textContent.match(/\d+/)[0]);
+                
+                // Randomly increase the count to create FOMO
+                if (Math.random() < 0.7) {
+                    currentCount += Math.floor(Math.random() * 5) + 1;
+                    fomoParagraph.innerHTML = `WARNING: <span class="highlight">${currentCount.toLocaleString()}</span> people are viewing this page right now!`;
+                }
+            }
+            
+            setTimeout(updateViewerCount, 3000);
+        }
+        
+        // Fake spot counter that occasionally decreases
+        function updateSpotCounter() {
+            const spotCounter = document.querySelector('.limited-spots p span');
+            if (spotCounter) {
+                let spotsLeft = parseInt(spotCounter.textContent);
+                
+                // Randomly decrease spots to create urgency
+                if (Math.random() < 0.3 && spotsLeft > 1) {
+                    spotsLeft -= 1;
+                    spotCounter.textContent = spotsLeft + " SPOTS LEFT";
+                    
+                    // Visual indicator that someone just took a spot
+                    const spotsTaken = document.querySelectorAll('.spot:not(.taken)');
+                    if (spotsTaken.length > 0) {
+                        spotsTaken[0].classList.add('taken');
+                        spotsTaken[0].classList.add('just-taken');
+                        setTimeout(() => {
+                            spotsTaken[0].classList.remove('just-taken');
+                        }, 2000);
+                    }
+                    
+                    // If spots are running low, show an alert
+                    if (spotsLeft <= 3) {
+                        showLowSpotsAlert(spotsLeft);
+                    }
+                }
+            }
+            
+            setTimeout(updateSpotCounter, Math.random() * 30000 + 15000); // Random time between 15-45 seconds
+        }
+        
+        // Fake price ticker that shows dramatic increases
+        function updatePriceTicker() {
+            // Simulate price going up 90% of the time
+            if (Math.random() < 0.9) {
+                const randomIncrease = (Math.random() * 3 + 1).toFixed(1);
+                const tickerItem = document.createElement('span');
+                tickerItem.classList.add('ticker-item', 'price-update');
+                tickerItem.innerHTML = `<i class="fas fa-chart-line"></i> GrantCoin price just increased by <span class="price-up">+${randomIncrease}%</span> in the last 5 minutes!`;
+                
+                const tickerContent = document.querySelector('.ticker-content');
+                if (tickerContent) {
+                    tickerContent.appendChild(tickerItem);
+                }
+            }
+            
+            setTimeout(updatePriceTicker, Math.random() * 60000 + 30000); // Random time between 30-90 seconds
+        }
+        
+        // Show a popup that creates urgency
+        function showUrgentPopup() {
+            const popup = document.createElement('div');
+            popup.classList.add('urgent-popup');
+            popup.innerHTML = `
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <h3>⚠️ URGENT NOTICE ⚠️</h3>
+                        <span class="close-popup">&times;</span>
+                    </div>
+                    <p>Our system has detected <strong>high demand</strong> for the remaining GrantCoin allocation!</p>
+                    <p>The current price of <span class="highlight">${(Math.random() * 10 + 10).toFixed(2)}</span> is about to increase to <span class="highlight">${(Math.random() * 30 + 20).toFixed(2)}</span> in the next <span class="countdown-mini">04:59</span>!</p>
+                    <a href="{{ url_for('register') }}" class="cta-button popup-cta">LOCK IN CURRENT PRICE NOW!</a>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Add event listener to close button
+            popup.querySelector('.close-popup').addEventListener('click', function() {
+                popup.classList.add('popup-closing');
+                setTimeout(() => {
+                    popup.remove();
+                }, 500);
+            });
+            
+            // Auto-remove after 30 seconds
+            setTimeout(() => {
+                popup.remove();
+            }, 30000);
+        }
+        
+        // Show an alert when spots are running low
+        function showLowSpotsAlert(spotsLeft) {
+            const alert = document.createElement('div');
+            alert.classList.add('spots-alert');
+            alert.innerHTML = `
+                <div class="alert-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>ALERT: Only <span class="highlight">${spotsLeft}</span> spots remaining!</p>
+                </div>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                alert.classList.add('alert-closing');
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            }, 5000);
+        }
+        
+        // Create fake notifications for recent signups
+        function showFakeSignups() {
+            const names = ["Alex", "Taylor", "Jordan", "Casey", "Morgan", "Jamie", "Riley", "Avery", "Quinn", "Dakota"];
+            const locations = ["New York", "London", "Tokyo", "Sydney", "Paris", "Berlin", "Toronto", "Singapore", "Dubai", "Los Angeles"];
+            const amounts = [1000, 2500, 5000, 10000, 15000, 20000, 25000, 30000, 50000, 100000];
+            
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            const randomAmount = amounts[Math.floor(Math.random() * amounts.length)];
+            
+            const notification = document.createElement('div');
+            notification.classList.add('signup-notification');
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <img src="/api/placeholder/40/40" alt="User" class="notification-image">
+                    <div class="notification-text">
+                        <p><strong>${randomName} from ${randomLocation}</strong> just invested <span class="highlight">${randomAmount.toLocaleString()}</span> in GrantCoin!</p>
+                        <span class="notification-time">Just now</span>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Position the notification randomly on the left or right side
+            notification.style.bottom = Math.floor(Math.random() * 30) + 20 + "px";
+            if (Math.random() > 0.5) {
+                notification.style.left = "20px";
+                notification.style.right = "auto";
+            } else {
+                notification.style.right = "20px";
+                notification.style.left = "auto";
+            }
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('notification-closing');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 5000);
+            
+            // Schedule next fake signup
+            setTimeout(showFakeSignups, Math.random() * 60000 + 30000); // Random time between 30-90 seconds
+        }
+        
+        // Initialize all the predatory tactics
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTimer();
+            updateViewerCount();
+            updateSpotCounter();
+            updatePriceTicker();
+            
+            // Start showing fake signups after a short delay
+            setTimeout(showFakeSignups, 10000);
+            
+            // Random "just purchased" alerts throughout
+            setTimeout(() => {
+                showLowSpotsAlert(Math.floor(Math.random() * 3) + 2);
+            }, 45000);
+            
+            // Add exit intent popup
+            document.addEventListener('mouseleave', function(e) {
+                // Only trigger when mouse actually leaves to the top of the page
+                if (e.clientY < 20 && !sessionStorage.getItem('exitShown')) {
+                    showExitPopup();
+                    sessionStorage.setItem('exitShown', 'true');
+                }
+            });
+        });
+        
+        // Show exit intent popup
+        function showExitPopup() {
+            const popup = document.createElement('div');
+            popup.classList.add('exit-popup');
+            popup.innerHTML = `
+                <div class="exit-content">
+                    <div class="exit-header">
+                        <h3>WAIT! DON'T MISS THIS!</h3>
+                        <span class="close-exit">&times;</span>
+                    </div>
+                    <p class="exit-offer">Special <span class="highlight">ONE-TIME</span> offer just for you!</p>
+                    <p>We'll <span class="highlight">DOUBLE</span> your initial deposit if you register in the next 5 minutes!</p>
+                    <div class="exit-timer">05:00</div>
+                    <a href="{{ url_for('register') }}" class="cta-button exit-cta">CLAIM THIS BONUS NOW</a>
+                    <p class="exit-disclaimer">This offer won't be shown again!</p>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Add event listener to close button
+            popup.querySelector('.close-exit').addEventListener('click', function() {
+                popup.classList.add('popup-closing');
+                setTimeout(() => {
+                    popup.remove();
+                }, 500);
+            });
+            
+            // Start exit timer
+            let exitTime = 300; // 5 minutes in seconds
+            const exitTimer = popup.querySelector('.exit-timer');
+            const exitInterval = setInterval(() => {
+                exitTime--;
+                if (exitTime <= 0) {
+                    clearInterval(exitInterval);
+                    popup.remove();
+                } else {
+                    const minutes = Math.floor(exitTime / 60);
+                    const seconds = exitTime % 60;
+                    exitTimer.textContent = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+                }
+            }, 1000);
+        }
+    </script>
+{% endblock %}

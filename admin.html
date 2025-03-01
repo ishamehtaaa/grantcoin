@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+    <section class="admin-panel">
+        <h1>GrantCoin Admin Panel</h1>
+        
+        <div class="admin-grid">
+            <div class="price-control card">
+                <h2>Control Coin Price</h2>
+                <div class="current-price">
+                    <p>Current Price: <span class="highlight">
+                    {% if price < 0.000001 %}
+                        ${{ "%.12f"|format(price) }}
+                    {% elif price < 0.001 %}
+                        ${{ "%.9f"|format(price) }}
+                    {% else %}
+                        ${{ "%.5f"|format(price) }}
+                    {% endif %}
+                    </span></p>
+                </div>
+                
+                <form action="{{ url_for('update_price') }}" method="post">
+                    <div class="form-group">
+                        <label for="new-price">New Price ($):</label>
+                        <input type="number" id="new-price" name="new_price" min="0.0000000000001" step="0.0000000000001" value="{{ price }}" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="admin-button">Update Price</button>
+                    </div>
+                </form>
+                <!-- Mass Coin Holdings Update Form -->
+                <div class="mass-update">
+                    <h3>Mass Coin Holdings Update</h3>
+                    <p>Set all user coin holdings to a specified amount:</p>
+                    <form action="{{ url_for('update_all_coins') }}" method="post">
+                        <div class="form-group">
+                            <label for="new-coin-amount">New Coin Holdings for ALL Users:</label>
+                            <input type="number" id="new-coin-amount" name="new_coin_amount" min="0" step="0.00000001" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="admin-button danger">Update All Coins</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Random Price Generator Button -->
+                <div class="random-price-generator">
+                    <h3>Random Price Generator</h3>
+                    <p>Generate a realistic crypto-like random price</p>
+                    <form action="{{ url_for('generate_new_price') }}" method="post">
+                        <button type="submit" class="admin-button special">Generate Random Price</button>
+                    </form>
+                </div>
+                
+                <!-- Auto Price Fluctuation Toggle Button -->
+                <div class="auto-fluctuation">
+                    <h3>Automatic Price Fluctuation</h3>
+                    <p>Randomly change price every 5 minutes to create market activity.</p>
+                    <form action="{{ url_for('toggle_price_fluctuation') }}" method="post">
+                        <button type="submit" class="admin-button {% if price_fluctuation_active %}active{% endif %}">
+                            {% if price_fluctuation_active %}
+                                Stop Auto-Fluctuation
+                            {% else %}
+                                Start Auto-Fluctuation
+                            {% endif %}
+                        </button>
+                    </form>
+                    <p class="status-text {% if price_fluctuation_active %}active{% endif %}">
+                        Status: {% if price_fluctuation_active %}Active{% else %}Inactive{% endif %}
+                    </p>
+                </div>
+                
+                <div class="price-history">
+                    <h3>Recent Price Updates</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Price</th>
+                                <th>Timestamp</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set prev_price = None %}
+                            {% for entry in price_history %}
+                                <tr>
+                                    <td>
+                                    {% if entry.price < 0.000001 %}
+                                        ${{ "%.12f"|format(entry.price) }}
+                                    {% elif entry.price < 0.001 %}
+                                        ${{ "%.9f"|format(entry.price) }}
+                                    {% else %}
+                                        ${{ "%.5f"|format(entry.price) }}
+                                    {% endif %}
+                                    </td>
+                                    <td>{{ entry.timestamp[:19] }}</td>
+                                    <td>
+                                        {% if prev_price is not none %}
+                                            {% set change = ((entry.price - prev_price) / prev_price * 100) %}
+                                            <span class="{% if change >= 0 %}positive{% else %}negative{% endif %}">
+                                                {{ "%.2f"|format(change) }}%
+                                            </span>
+                                        {% endif %}
+                                        {% set prev_price = entry.price %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="user-management card">
+                <h2>User Management</h2>
+                
+                <!-- Mass Balance Update Form -->
+                <div class="mass-update">
+                    <h3>Mass Balance Update</h3>
+                    <p>Set all user balances to a specified amount:</p>
+                    <form action="{{ url_for('update_all_balances') }}" method="post">
+                        <div class="form-group">
+                            <label for="new-balance">New Balance for ALL Users ($):</label>
+                            <input type="number" id="new-balance" name="new_balance" min="0" step="1" value="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="admin-button danger">Update All Balances</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="users-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Balance</th>
+                                <th>Coins</th>
+                                <th>Value ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ user.username }}</td>
+                                    <td>${{ "%.2f"|format(user.balance) }}</td>
+                                    <td>{{ "%.8f"|format(user.coins) }}</td>
+                                    <td>${{ "%.2f"|format(user.coins * price) }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4">No users yet</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="transaction-monitor card">
+                <h2>Transaction Monitor</h2>
+                <div class="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Coins</th>
+                                <th>Price</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr class="{{ tx.type }}">
+                                    <td>{{ tx.username }}</td>
+                                    <td>{{ tx.type.upper() }}</td>
+                                    <td>${{ "%.2f"|format(tx.amount) }}</td>
+                                    <td>{{ "%.8f"|format(tx.coin_amount) }}</td>
+                                    <td>
+                                    {% if tx.price < 0.000001 %}
+                                        ${{ "%.12f"|format(tx.price) }}
+                                    {% elif tx.price < 0.001 %}
+                                        ${{ "%.9f"|format(tx.price) }}
+                                    {% else %}
+                                        ${{ "%.5f"|format(tx.price) }}
+                                    {% endif %}
+                                    </td>
+                                    <td>{{ tx.timestamp[:19] }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">No transactions yet</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="admin-tools card">
+                <h2>Admin Tools</h2>
+                
+                <div class="tool-section">
+                    <h3>Marketing Tools</h3>
+                    <p>Create FOMO by manipulating prices strategically:</p>
+                    <ul>
+                        <li>Increase price gradually to show "growth"</li>
+                        <li>Create small dips to encourage buying</li>
+                        <li>Sharp increase to create news-worthy "pump"</li>
+                        <li>Use micro-prices (e.g., $0.00347) to create illusion of affordability</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-section">
+                    <h3>Manipulation Strategy</h3>
+                    <p>Recommended pattern:</p>
+                    <ol>
+                        <li>Gradual increase for 3-4 days</li>
+                        <li>Small dip (10-15%)</li>
+                        <li>Rapid recovery + 20% gain</li>
+                        <li>Stable period to encourage more buying</li>
+                        <li>Repeat</li>
+                    </ol>
+                </div>
+                
+                <div class="tool-section">
+                    <h3>Auto-Fluctuation Feature</h3>
+                    <p>The auto-fluctuation feature simulates market activity by:</p>
+                    <ul>
+                        <li>Randomly changing price every 5 minutes</li>
+                        <li>Creating nano-price tokens (0.0000000001234) for maximum "moon potential"</li>
+                        <li>Higher volatility for nano-prices (-15% to +25%) vs normal prices (-7.5% to +9.5%)</li>
+                        <li>Generating FOMO by showing "1,000,000x potential" with rock-bottom pricing</li>
+                        <li>Using scientific notation and extreme precision for the scammy "legit tech" look</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-section scam-tactics">
+                    <h3>Advanced Scam Tactics</h3>
+                    <p>For maximum effectiveness:</p>
+                    <ul>
+                        <li><strong>Balance Reset:</strong> Give users high initial balances to encourage large initial investments</li>
+                        <li><strong>Nano Prices:</strong> Keep prices extremely low to create the impression of massive growth potential</li>
+                        <li><strong>Restrict Selling:</strong> Gradually make it harder for users to sell once they've invested heavily</li>
+                        <li><strong>FOMO Cycle:</strong> Create cycles of rapid price increases followed by small dips to encourage "buying the dip"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript to refresh price in real-time with proper formatting -->
+    <script>
+        {% if price_fluctuation_active %}
+        // Only activate auto-refresh if price fluctuation is active
+        setInterval(function() {
+            fetch('/get_current_price')
+                .then(response => response.json())
+                .then(data => {
+                    const price = parseFloat(data.price);
+                    const priceElements = document.querySelectorAll('.current-price span');
+                    
+                    // Format price based on size
+                    let formattedPrice;
+                    if (price < 0.000001) {
+                        formattedPrice = `$${price.toFixed(12)}`;
+                    } else if (price < 0.001) {
+                        formattedPrice = `$${price.toFixed(9)}`;
+                    } else {
+                        formattedPrice = `$${price.toFixed(5)}`;
+                    }
+                    
+                    priceElements.forEach(el => {
+                        el.textContent = formattedPrice;
+                        // Add a flash effect
+                        el.classList.add('price-updated');
+                        setTimeout(() => el.classList.remove('price-updated'), 1000);
+                    });
+                });
+        }, 10000); // Check every 10 seconds
+        {% endif %}
+    </script>
+
+    <!-- CSS for the admin panel -->
+    <style>
+        .admin-button.active {
+            background-color: #ff3b30;
+        }
+        
+        .admin-button.special {
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            border: none;
+            color: white;
+        }
+        
+        .admin-button.danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .admin-button.danger:hover {
+            background-color: #c82333;
+        }
+        
+        .status-text {
+            font-weight: bold;
+            color: #777;
+        }
+        
+        .status-text.active {
+            color: #00b74a;
+        }
+        
+        .price-updated {
+            animation: flash 1s;
+        }
+        
+        @keyframes flash {
+            0% { background-color: transparent; }
+            50% { background-color: rgba(255, 215, 0, 0.5); }
+            100% { background-color: transparent; }
+        }
+        
+        .auto-fluctuation, .random-price-generator {
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .auto-fluctuation {
+            border-left: 4px solid #ffbb33;
+        }
+        
+        .random-price-generator {
+            border-left: 4px solid #1e3c72;
+        }
+        
+        .mass-update {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 0 0 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .tool-section.scam-tactics {
+            background-color: rgba(220, 53, 69, 0.05);
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            border-left: 3px solid #dc3545;
+        }
+        
+        .positive {
+            color: #00b74a;
+            font-weight: bold;
+        }
+        
+        .negative {
+            color: #ff3b30;
+            font-weight: bold;
+        }
+        
+        /* Transaction types */
+        tr.buy td:nth-child(2) {
+            color: #00b74a;
+            font-weight: bold;
+        }
+        
+        tr.sell td:nth-child(2) {
+            color: #ff3b30;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
